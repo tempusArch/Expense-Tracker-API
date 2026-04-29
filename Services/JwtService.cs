@@ -10,10 +10,8 @@ using System.Text;
 namespace ExpenseTrackerApi.Services;
 
 public class JwtService {
-    private readonly ExpenseTrackerApiDbContext _context;
     private readonly IConfiguration _config;
-    public JwtService(ExpenseTrackerApiDbContext context, IConfiguration config) {
-        _context = context;
+    public JwtService(IConfiguration config) {       
         _config = config;
     }
 
@@ -22,7 +20,7 @@ public class JwtService {
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[] {
-            new Claim(JwtRegisteredClaimNames.Sub, um.Email),
+            new Claim(JwtRegisteredClaimNames.Sub, um.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, um.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };

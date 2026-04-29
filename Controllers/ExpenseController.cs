@@ -8,7 +8,6 @@ namespace ExpenseTrackerApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-
 public class ExpenseController : ControllerBase {
     private readonly ExpenseTrackerApiDbContext _context;
     public ExpenseController(ExpenseTrackerApiDbContext context) {
@@ -20,14 +19,15 @@ public class ExpenseController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User is not authenticated");
+            throw new Exception("User ID claim missing");
      
         var result = await _context.ExpenseTable
-                .Where(n => n.UserId == userId)
-                .OrderBy(n => n.Id)
-                .Skip((page - 1) * limit)
-                .Take(limit)
-                .ToListAsync();
+            .AsNoTracking()
+            .Where(n => n.UserId == userId)
+            .OrderBy(n => n.Id)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
 
         return Ok(result);
     }
@@ -37,15 +37,16 @@ public class ExpenseController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User is not authenticated");
+            throw new Exception("User ID claim missing");
      
         var result = await _context.ExpenseTable
-                .Where(n => n.UserId == userId)
-                .Where(n => n.Date >= startDate && n.Date < endDate.AddDays(1))
-                .OrderBy(n => n.Id)
-                .Skip((page - 1) * limit)
-                .Take(limit)
-                .ToListAsync();
+            .AsNoTracking()
+            .Where(n => n.UserId == userId)
+            .Where(n => n.Date >= startDate && n.Date < endDate.AddDays(1))
+            .OrderBy(n => n.Id)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
 
         return Ok(result);
     }
@@ -55,17 +56,18 @@ public class ExpenseController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User is not authenticated");
+            throw new Exception("User ID claim missing");
 
         DateTime startDate = DateTime.UtcNow.AddDays(-7);
      
         var result = await _context.ExpenseTable
-                .Where(n => n.UserId == userId)
-                .Where(n => n.Date >= startDate)
-                .OrderBy(n => n.Id)
-                .Skip((page - 1) * limit)
-                .Take(limit)
-                .ToListAsync();
+            .AsNoTracking()
+            .Where(n => n.UserId == userId)
+            .Where(n => n.Date >= startDate)
+            .OrderBy(n => n.Id)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
 
         return Ok(result);
     }
@@ -75,17 +77,18 @@ public class ExpenseController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User is not authenticated");
+            throw new Exception("User ID claim missing");
 
         DateTime startDate = DateTime.UtcNow.AddMonths(-1);
      
         var result = await _context.ExpenseTable
-                .Where(n => n.UserId == userId)
-                .Where(n => n.Date >= startDate)
-                .OrderBy(n => n.Id)
-                .Skip((page - 1) * limit)
-                .Take(limit)
-                .ToListAsync();
+            .AsNoTracking()
+            .Where(n => n.UserId == userId)
+            .Where(n => n.Date >= startDate)
+            .OrderBy(n => n.Id)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
 
         return Ok(result);
     }
@@ -95,17 +98,18 @@ public class ExpenseController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User is not authenticated");
+            throw new Exception("User ID claim missing");
 
         DateTime startDate = DateTime.UtcNow.AddMonths(-3);
      
         var result = await _context.ExpenseTable
-                .Where(n => n.UserId == userId)
-                .Where(n => n.Date >= startDate)
-                .OrderBy(n => n.Id)
-                .Skip((page - 1) * limit)
-                .Take(limit)
-                .ToListAsync();
+            .AsNoTracking()
+            .Where(n => n.UserId == userId)
+            .Where(n => n.Date >= startDate)
+            .OrderBy(n => n.Id)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
 
         return Ok(result);
     }
@@ -115,7 +119,7 @@ public class ExpenseController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User is not authenticated");
+            throw new Exception("User ID claim missing");
 
         var newOne = new ExpenseModel {
             Description = dto.Description,
@@ -136,7 +140,7 @@ public class ExpenseController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User is not authenticated");
+            throw new Exception("User ID claim missing");
 
         var existingOne = await _context.ExpenseTable.FindAsync(id);
 
@@ -161,7 +165,7 @@ public class ExpenseController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User is not authenticated");
+            throw new Exception("User ID claim missing");
 
         var existingOne = await _context.ExpenseTable.FindAsync(id);
 
