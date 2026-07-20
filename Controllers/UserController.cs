@@ -1,6 +1,7 @@
 using ExpenseTrackerApi.Data;
 using ExpenseTrackerApi.Models;
 using ExpenseTrackerApi.Services;
+using ExpenseTrackerAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +20,26 @@ public class UserController : ControllerBase {
 
     [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<ActionResult<RegisterUserResponseDto>> ERegisterUser(UserModel um) {
-        um.PasswordHash = BCrypt.Net.BCrypt.HashPassword(um.PasswordHash);
+    public async Task<ActionResult<RegisterUserResponseDto>> ERegisterUser(RegisterUserDto um) {
+        var isEmailExisted = await _context.UserTable
+            .AnyAsync(x => x.Email == um.Email);
 
-        _context.UserTable.Add(um);
+        if (isEmailExisted)
+            return Conflict("Email already existed");
+
+        UserModel theNewUser = new UserModel {
+            Nickname = um.Name,
+            Email = um.Email,
+            PasswordHash = um.Password
+        };
+            
+        theNewUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(theNewUser.PasswordHash);
+
+        _context.UserTable.Add(theNewUser);
         await _context.SaveChangesAsync();
 
         var result = new RegisterUserResponseDto {
-            Nickname = um.Nickname,
+            Nickname = um.Name,
             Email = um.Email
         };
 
